@@ -7,10 +7,14 @@ import com.itheima.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 /**
  * Desription:
@@ -29,6 +33,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     /**
      * 下单
      * @return
@@ -38,7 +45,8 @@ public class OrderController {
         log.info("接收到{}号商品的下单请求，接下来调用商品微服务查询此商品信息",pid);
 
         //调用商品微服务，查询商品信息
-        Product product = restTemplate.getForObject("http://127.0.0.1:8081/product/"+pid,Product.class);
+        Product product = restTemplate.getForObject("http://service-product/product/"+pid,Product.class);
+
         log.info("查询到{}号商品的信息，内容是{}",pid, JSON.toJSONString(product));
 
         //下单
